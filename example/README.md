@@ -1,6 +1,6 @@
-# camera_example
+# camera_plugin_example
 
-Demonstrates how to use the camera plugin.
+Demonstrates how to use the camera_plugin plugin.
 
 ## Getting Started
 

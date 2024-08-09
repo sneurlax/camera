@@ -50,7 +50,6 @@ function(apply_cargokit target manifest_dir lib_name any_symbol_name)
     else()
         set(SCRIPT_EXTENSION ".sh")
         set(IMPORT_LIB_EXTENSION "")
-        execute_process(COMMAND chmod +x "${cargokit_cmake_root}/run_build_tool${SCRIPT_EXTENSION}")
     endif()
 
     # Using generators in custom command is only supported in CMake 3.20+
@@ -75,7 +74,6 @@ function(apply_cargokit target manifest_dir lib_name any_symbol_name)
             VERBATIM
         )
     endif()
-
 
     set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/_phony_" PROPERTIES SYMBOLIC TRUE)
 

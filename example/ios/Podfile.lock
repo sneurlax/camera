@@ -1,0 +1,21 @@
+PODS:
+  - Flutter (1.0.0)
+  - camera_plugin (0.0.1)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - camera_plugin (from `.symlinks/plugins/camera_plugin/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  camera_plugin:
+    :path: ".symlinks/plugins/camera_plugin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  camera_plugin: 68384607453c42fe5f940b30dd7a9e58f7f65840
+
+PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
+
+COCOAPODS: 1.12.1

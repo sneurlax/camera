@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "camera_example" "\0"
+            VALUE "FileDescription", "camera_plugin_example" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "camera_example" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "camera_example.exe" "\0"
-            VALUE "ProductName", "camera_example" "\0"
+            VALUE "InternalName", "camera_plugin_example" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
+            VALUE "OriginalFilename", "hello_rust_ffi_plugin_example.exe" "\0"
+            VALUE "ProductName", "hello_rust_ffi_plugin_example" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
