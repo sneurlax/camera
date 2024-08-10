@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:camera_plugin/camera_plugin.dart' as camera_plugin;
 import 'package:flutter/material.dart';
@@ -15,14 +16,23 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late int sumResult;
-  late Future<int> sumAsyncResult;
+  // The image bytes captured by the camera.
+  Uint8List? imageBytes;
 
   @override
   void initState() {
     super.initState();
-    sumResult = camera_plugin.sum(1, 2);
-    sumAsyncResult = camera_plugin.sumAsync(3, 4);
+  }
+
+  // Wrap the captureImage call in a Future to avoid blocking the UI thread.
+  Future<void> _captureImage() async {
+    final Uint8List? _imageBytes = await camera_plugin.captureImage();
+    if (_imageBytes == null) {
+      return;
+    }
+    setState(() {
+      imageBytes = _imageBytes;
+    });
   }
 
   @override
@@ -39,30 +49,18 @@ class _MyAppState extends State<MyApp> {
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
-                const Text(
-                  'This calls a native function through FFI that is shipped as source in the package. '
-                  'The native code is built as part of the Flutter Runner build.',
-                  style: textStyle,
-                  textAlign: TextAlign.center,
-                ),
-                spacerSmall,
-                Text(
-                  'sum(1, 2) = $sumResult',
-                  style: textStyle,
-                  textAlign: TextAlign.center,
-                ),
-                spacerSmall,
-                FutureBuilder<int>(
-                  future: sumAsyncResult,
-                  builder: (BuildContext context, AsyncSnapshot<int> value) {
-                    final displayValue =
-                        (value.hasData) ? value.data : 'loading';
-                    return Text(
-                      'await sumAsync(3, 4) = $displayValue',
-                      style: textStyle,
-                      textAlign: TextAlign.center,
-                    );
+                ElevatedButton(
+                  onPressed: () {
+                    final bool result = camera_plugin.initializeCamera();
+                    if (!result) {
+                      print('Failed to initialize camera');
+                    }
                   },
+                  child: const Text('Initialize Camera'),
+                ),
+                ElevatedButton(
+                  onPressed: imageBytes == null ? _captureImage : null,
+                  child: const Text('Capture Image'),
                 ),
               ],
             ),

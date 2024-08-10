@@ -11,59 +11,54 @@ import 'dart:ffi' as ffi;
 ///
 /// Regenerate bindings with `flutter pub run ffigen --config ffigen.yaml`.
 ///
-class HelloRustFfiPluginBindings {
+class CameraPluginBindings {
   /// Holds the symbol lookup function.
   final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
       _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
-  HelloRustFfiPluginBindings(ffi.DynamicLibrary dynamicLibrary)
+  CameraPluginBindings(ffi.DynamicLibrary dynamicLibrary)
       : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
-  HelloRustFfiPluginBindings.fromLookup(
+  CameraPluginBindings.fromLookup(
       ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
           lookup)
       : _lookup = lookup;
 
-  /// A very short-lived native function.
-  ///
-  /// For very short-lived functions, it is fine to call them on the main isolate.
-  /// They will block the Dart execution while running the native function, so
-  /// only do this for native functions which are guaranteed to be short-lived.
-  int sum(
-    int a,
-    int b,
+  bool initialize_camera() {
+    return _initialize_camera();
+  }
+
+  late final _initialize_cameraPtr =
+      _lookup<ffi.NativeFunction<ffi.Bool Function()>>('initialize_camera');
+  late final _initialize_camera =
+      _initialize_cameraPtr.asFunction<bool Function()>();
+
+  bool capture_image(
+    ffi.Pointer<ffi.Uint8> buffer,
+    ffi.Pointer<ffi.UnsignedLong> len,
   ) {
-    return _sum(
-      a,
-      b,
+    return _capture_image(
+      buffer,
+      len,
     );
   }
 
-  late final _sumPtr =
-      _lookup<ffi.NativeFunction<ffi.IntPtr Function(ffi.IntPtr, ffi.IntPtr)>>(
-          'sum');
-  late final _sum = _sumPtr.asFunction<int Function(int, int)>();
+  late final _capture_imagePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Bool Function(ffi.Pointer<ffi.Uint8>,
+              ffi.Pointer<ffi.UnsignedLong>)>>('capture_image');
+  late final _capture_image = _capture_imagePtr.asFunction<
+      bool Function(ffi.Pointer<ffi.Uint8>, ffi.Pointer<ffi.UnsignedLong>)>();
 
-  /// A longer lived native function, which occupies the thread calling it.
-  ///
-  /// Do not call these kind of native functions in the main isolate. They will
-  /// block Dart execution. This will cause dropped frames in Flutter applications.
-  /// Instead, call these native functions on a separate isolate.
-  int sum_long_running(
-    int a,
-    int b,
-  ) {
-    return _sum_long_running(
-      a,
-      b,
-    );
+  ffi.Pointer<ffi.Int8> get_last_error() {
+    return _get_last_error();
   }
 
-  late final _sum_long_runningPtr =
-      _lookup<ffi.NativeFunction<ffi.IntPtr Function(ffi.IntPtr, ffi.IntPtr)>>(
-          'sum_long_running');
-  late final _sum_long_running =
-      _sum_long_runningPtr.asFunction<int Function(int, int)>();
+  late final _get_last_errorPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Int8> Function()>>(
+          'get_last_error');
+  late final _get_last_error =
+      _get_last_errorPtr.asFunction<ffi.Pointer<ffi.Int8> Function()>();
 }
