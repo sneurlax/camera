@@ -15,6 +15,6 @@ block2 = "0.6.0"
 dispatch2 = "0.2.0"
 objc2 = "0.6.0"
 objc2-av-foundation = { version = "0.3.0", features = ["AVCaptureDevice", "AVCaptureSession", "AVCaptureInput", "AVCaptureOutput", "AVCaptureVideoDataOutput", "AVMediaFormat", "objc2-core-media", "objc2-core-video"] }
-objc2-core-media = { version = "0.3.0", features = ["CMFormatDescription", "CMSampleBuffer", "CMTime"] }
-objc2-core-video = { version = "0.3.0", features = ["CVPixelBuffer", "CVImageBuffer", "CVBuffer", "CVReturn", "CVPixelBufferIOSurface"] }
-objc2-foundation = { version = "0.3.0", features = ["NSString", "NSArray", "NSDictionary", "NSValue", "NSEnumerator", "NSError"] }
+objc2-core-media = { version = "0.3.0", features = ["CMFormatDescription", "CMSampleBuffer", "CMTime", "objc2-core-video"] }
+objc2-core-video = { version = "0.3.0", features = ["CVPixelBuffer", "CVImageBuffer", "CVBuffer", "CVReturn"] }
+objc2-foundation = { version = "0.3.0", features = ["NSString", "NSArray", "NSDictionary", "NSValue", "NSEnumerator", "NSError", "NSObject"] }

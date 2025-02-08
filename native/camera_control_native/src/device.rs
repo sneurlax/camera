@@ -3,6 +3,8 @@
 //! We hand-roll JSON to keep the crate dependency-free. The shape matches the
 //! Dart parser in native_backend_ffi.dart.
 
+#![allow(dead_code)] // Format wire-contract fields are not all emitted yet.
+
 /// Pixel layout of captured frames. Order must match the Dart `PixelFormat`.
 #[derive(Clone, Copy)]
 pub enum PixelFormat {
