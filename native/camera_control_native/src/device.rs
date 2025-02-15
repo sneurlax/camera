@@ -6,7 +6,12 @@
 #![allow(dead_code)] // Format wire-contract fields are not all emitted yet.
 
 /// Pixel layout of captured frames. Order must match the Dart `PixelFormat`.
+///
+/// Only `Bgra8888` is produced today (AVFoundation is configured to deliver
+/// BGRA); the rest are part of the wire contract with the Dart side for the
+/// other platforms/formats that land later.
 #[derive(Clone, Copy)]
+#[allow(dead_code)]
 pub enum PixelFormat {
     Rgba8888 = 0,
     Bgra8888 = 1,
