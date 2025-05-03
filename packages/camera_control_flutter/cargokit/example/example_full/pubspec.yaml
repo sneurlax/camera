@@ -1,0 +1,17 @@
+name: example_full
+description: Comprehensive pure-Dart cargokit example with multi-crate FFI.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  hooks: ^0.20.0
+  code_assets: ^0.18.0
+  build_tool:
+    path: ../../build_tool
+  ffi: ^2.1.0
+
+dev_dependencies:
+  test: ^1.24.0
