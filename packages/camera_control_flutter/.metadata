@@ -1,0 +1,33 @@
+# This file tracks properties of this Flutter project.
+# Used by Flutter tool to assess capabilities and perform upgrades etc.
+#
+# This file should be version controlled and should not be manually edited, except by Flutter migrate. To learn more, see: https://flutter.dev/to/file-version-control
+
+version:
+  revision: "ba39319843b7c64e0d540fc0470c01563317dd6a"
+  channel: "stable"
+
+project_type: plugin
+
+# Tracks metadata for the flutter migrate command
+managedVersion: true
+migration:
+  platforms:
+    - platform: root
+      create_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+      base_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+    - platform: android
+      create_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+      base_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+    - platform: ios
+      create_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+      base_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+    - platform: linux
+      create_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+      base_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+    - platform: macos
+      create_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+      base_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+    - platform: windows
+      create_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
+      base_revision: ba39319843b7c64e0d540fc0470c01563317dd6a
