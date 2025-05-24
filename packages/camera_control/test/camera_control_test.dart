@@ -36,15 +36,17 @@ void main() {
     });
 
     test('skips unavailable backends', () {
-      CameraBackendRegistry.instance
-          .register(_FakeBackend('off', 100, isAvailable: false));
+      CameraBackendRegistry.instance.register(
+        _FakeBackend('off', 100, isAvailable: false),
+      );
       CameraBackendRegistry.instance.register(_FakeBackend('on', 1));
       expect(CameraBackendRegistry.instance.selected.name, 'on');
     });
 
     test('throws when nothing is available', () {
-      CameraBackendRegistry.instance
-          .register(_FakeBackend('off', 1, isAvailable: false));
+      CameraBackendRegistry.instance.register(
+        _FakeBackend('off', 1, isAvailable: false),
+      );
       expect(() => CameraBackendRegistry.instance.selected, throwsStateError);
     });
 
