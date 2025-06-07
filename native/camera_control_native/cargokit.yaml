@@ -1,4 +1,0 @@
-cargokit:
-  cargo:
-    release:
-      toolchain: stable
