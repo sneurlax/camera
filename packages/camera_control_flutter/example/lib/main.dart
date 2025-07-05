@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:camera_control_flutter/camera_control_flutter.dart';
@@ -38,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   StreamSubscription<Frame>? _sub;
   ui.Image? _preview;
   bool _streaming = false;
+  bool _decoding = false;
 
   @override
   void initState() {
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
       _camera = camera;
       _streaming = true;
       _sub = camera.frames().listen(
-        (frame) => unawaited(_onFrame(frame)),
+        _onFrame,
         onError: (Object e) => setState(() => _error = '$e'),
       );
       setState(() {});
@@ -75,47 +75,34 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _onFrame(Frame frame) async {
-    // Decode raw pixels into an Image. The decoder reads RGBA, so swap channels
-    // when the source is BGRA.
-    final rgba = frame.pixelFormat == PixelFormat.bgra8888
-        ? _bgraToRgba(frame.bytes)
-        : frame.bytes;
-    final buffer = await ui.ImmutableBuffer.fromUint8List(rgba);
-    final descriptor = ui.ImageDescriptor.raw(
-      buffer,
-      width: frame.width,
-      height: frame.height,
-      pixelFormat: ui.PixelFormat.rgba8888,
-    );
-    final codec = await descriptor.instantiateCodec();
-    final info = await codec.getNextFrame();
-    buffer.dispose();
-    descriptor.dispose();
-    codec.dispose();
-    if (!mounted || !_streaming) {
-      info.image.dispose();
-      return;
-    }
-    setState(() {
-      _preview?.dispose();
-      _preview = info.image;
+  void _onFrame(Frame frame) {
+    // Drop frames while a decode is in flight so work never piles up behind a
+    // slow paint: always show the freshest frame, never a backlog.
+    if (_decoding || !_streaming) return;
+    _decoding = true;
+    // Decode the pixels directly in their native layout (no channel swap): the
+    // decoder consumes BGRA as-is.
+    final format = frame.pixelFormat == PixelFormat.rgba8888
+        ? ui.PixelFormat.rgba8888
+        : ui.PixelFormat.bgra8888;
+    ui.decodeImageFromPixels(frame.bytes, frame.width, frame.height, format, (
+      image,
+    ) {
+      _decoding = false;
+      if (!mounted || !_streaming) {
+        image.dispose();
+        return;
+      }
+      setState(() {
+        _preview?.dispose();
+        _preview = image;
+      });
     });
-  }
-
-  static Uint8List _bgraToRgba(Uint8List bgra) {
-    final out = Uint8List(bgra.length);
-    for (var i = 0; i + 3 < bgra.length; i += 4) {
-      out[i] = bgra[i + 2];
-      out[i + 1] = bgra[i + 1];
-      out[i + 2] = bgra[i];
-      out[i + 3] = bgra[i + 3];
-    }
-    return out;
   }
 
   Future<void> _stop() async {
     _streaming = false;
+    _decoding = false;
     await _sub?.cancel();
     _sub = null;
     await _camera?.close();
