@@ -28,7 +28,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String _backend = '';
   List<CameraDevice> _devices = const [];
   String? _error;
@@ -42,7 +42,18 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _load();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Stop capture before the app detaches: otherwise the native capture
+    // thread can deliver a frame into a torn-down isolate and crash on quit.
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      _stop();
+    }
   }
 
   Future<void> _load() async {
@@ -114,6 +125,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _stop();
     super.dispose();
   }
