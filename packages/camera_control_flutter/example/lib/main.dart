@@ -3,6 +3,8 @@ import 'dart:ui' as ui;
 
 import 'package:camera_control_flutter/camera_control_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' show AppExitResponse;
 
 void main() {
   runApp(const ExampleApp());
@@ -28,7 +30,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class _HomePageState extends State<HomePage> {
   String _backend = '';
   List<CameraDevice> _devices = const [];
   String? _error;
@@ -38,22 +40,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   ui.Image? _preview;
   bool _streaming = false;
   bool _decoding = false;
+  late final AppLifecycleListener _lifecycle;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    // Stop capture before the app exits so the native capture thread cannot
+    // deliver a frame into a torn-down isolate. onExitRequested awaits the
+    // async stop before allowing exit; the plugin's applicationWillTerminate
+    // is the synchronous belt-and-suspenders for hard quits.
+    _lifecycle = AppLifecycleListener(
+      onExitRequested: () async {
+        await _stop();
+        return AppExitResponse.exit;
+      },
+    );
     _load();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Stop capture before the app detaches: otherwise the native capture
-    // thread can deliver a frame into a torn-down isolate and crash on quit.
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached) {
-      _stop();
-    }
   }
 
   Future<void> _load() async {
@@ -125,7 +127,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    _lifecycle.dispose();
     _stop();
     super.dispose();
   }
