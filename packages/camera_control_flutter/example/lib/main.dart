@@ -3,8 +3,6 @@ import 'dart:ui' as ui;
 
 import 'package:camera_control_flutter/camera_control_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/services.dart' show AppExitResponse;
 
 void main() {
   runApp(const ExampleApp());
@@ -52,7 +50,7 @@ class _HomePageState extends State<HomePage> {
     _lifecycle = AppLifecycleListener(
       onExitRequested: () async {
         await _stop();
-        return AppExitResponse.exit;
+        return ui.AppExitResponse.exit;
       },
     );
     _load();
