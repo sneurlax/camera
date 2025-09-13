@@ -24,7 +24,13 @@ use std::sync::{Mutex, MutexGuard};
 #[cfg(any(target_os = "macos", target_os = "ios"))]
 mod avfoundation;
 
+#[cfg(target_os = "windows")]
+mod media_foundation;
+
 mod device;
+// `Format` is only used by the macOS/iOS backend; other platforms report frame
+// dimensions per-frame instead of pre-listing formats.
+#[allow(unused_imports)]
 pub(crate) use device::{Device, Format, PixelFormat};
 
 /// A frame produced by a platform capture session.
@@ -250,12 +256,22 @@ fn platform_open(id: &str) -> Result<Box<dyn FrameSource>, ()> {
     avfoundation::open(id)
 }
 
-#[cfg(not(any(target_os = "macos", target_os = "ios")))]
+#[cfg(target_os = "windows")]
+fn platform_enumerate() -> Vec<Device> {
+    media_foundation::enumerate()
+}
+
+#[cfg(target_os = "windows")]
+fn platform_open(id: &str) -> Result<Box<dyn FrameSource>, ()> {
+    media_foundation::open(id)
+}
+
+#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "windows")))]
 fn platform_enumerate() -> Vec<Device> {
     Vec::new()
 }
 
-#[cfg(not(any(target_os = "macos", target_os = "ios")))]
+#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "windows")))]
 fn platform_open(_id: &str) -> Result<Box<dyn FrameSource>, ()> {
     Err(())
 }

@@ -18,3 +18,14 @@ objc2-av-foundation = { version = "0.3.0", features = ["AVCaptureDevice", "AVCap
 objc2-core-media = { version = "0.3.0", features = ["CMFormatDescription", "CMSampleBuffer", "CMTime", "objc2-core-video"] }
 objc2-core-video = { version = "0.3.0", features = ["CVPixelBuffer", "CVImageBuffer", "CVBuffer", "CVReturn"] }
 objc2-foundation = { version = "0.3.0", features = ["NSString", "NSArray", "NSDictionary", "NSValue", "NSEnumerator", "NSError", "NSObject"] }
+
+# Windows: Media Foundation capture. The `windows` crate binds to system DLLs
+# (mfplat/mfreadwrite/ole32) that ship with every Windows install -- no extra
+# dependency for consumers to install, consistent with the crate's no-system-
+# deps rule.
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = { version = "0.54", features = [
+    "Win32_Foundation",
+    "Win32_System_Com",
+    "Win32_Media_MediaFoundation",
+] }
