@@ -27,6 +27,9 @@ mod avfoundation;
 #[cfg(target_os = "windows")]
 mod media_foundation;
 
+#[cfg(target_os = "android")]
+mod android;
+
 mod device;
 // `Format` is only used by the macOS/iOS backend; other platforms report frame
 // dimensions per-frame instead of pre-listing formats.
@@ -266,12 +269,32 @@ fn platform_open(id: &str) -> Result<Box<dyn FrameSource>, ()> {
     media_foundation::open(id)
 }
 
-#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "windows")))]
+#[cfg(target_os = "android")]
+fn platform_enumerate() -> Vec<Device> {
+    android::enumerate()
+}
+
+#[cfg(target_os = "android")]
+fn platform_open(id: &str) -> Result<Box<dyn FrameSource>, ()> {
+    android::open(id)
+}
+
+#[cfg(not(any(
+    target_os = "macos",
+    target_os = "ios",
+    target_os = "windows",
+    target_os = "android"
+)))]
 fn platform_enumerate() -> Vec<Device> {
     Vec::new()
 }
 
-#[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "windows")))]
+#[cfg(not(any(
+    target_os = "macos",
+    target_os = "ios",
+    target_os = "windows",
+    target_os = "android"
+)))]
 fn platform_open(_id: &str) -> Result<Box<dyn FrameSource>, ()> {
     Err(())
 }
