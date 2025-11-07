@@ -70,20 +70,43 @@ class WebBackend implements CameraBackend {
   @override
   Future<Camera> open(CameraDevice device) async {
     final devices = web.window.navigator.mediaDevices;
-    // Request the chosen device by id. The video constraints are a JS object;
-    // package:web's MediaTrackConstraints is a JSObject, passed as the JSAny
-    // `video` value.
-    final video = web.MediaTrackConstraints(deviceId: device.id.toJS);
-    final constraints = web.MediaStreamConstraints(video: video as JSAny);
-    final web.MediaStream stream;
-    try {
-      stream = await devices.getUserMedia(constraints).toDart;
-    } catch (e) {
-      throw DeviceException('Failed to open camera: $e');
-    }
+    final stream = await _openStream(devices, device);
     final camera = _WebCamera(device, stream);
     await camera._start();
     return camera;
+  }
+
+  /// Open a stream for [device], preferring it but never hard-failing if it
+  /// cannot be matched.
+  ///
+  /// The chosen device is requested via `deviceId: {exact: id}` (a JS object,
+  /// not a bare string -- the bare-string form is unreliable through the
+  /// interop layer). If that throws (e.g. the id went stale between enumerate
+  /// and open, or the device is busy) we fall back to any available camera so
+  /// the user still gets a preview rather than a NotFoundError.
+  Future<web.MediaStream> _openStream(
+    web.MediaDevices devices,
+    CameraDevice device,
+  ) async {
+    final byId = web.MediaStreamConstraints(
+      video:
+          web.MediaTrackConstraints(
+                deviceId:
+                    web.ConstrainDOMStringParameters(exact: device.id.toJS)
+                        as JSAny,
+              )
+              as JSAny,
+    );
+    final anyCamera = web.MediaStreamConstraints(video: true.toJS);
+    Object? lastError;
+    for (final constraints in [byId, anyCamera]) {
+      try {
+        return await devices.getUserMedia(constraints).toDart;
+      } catch (e) {
+        lastError = e;
+      }
+    }
+    throw DeviceException('Failed to open camera: $lastError');
   }
 }
 
@@ -139,7 +162,7 @@ class _WebCamera implements Camera {
     // requestVideoFrameCallback fires once per decoded frame (supported by
     // Chrome, Brave, and Safari 16+); the callback gets (now, metadata).
     _video.requestVideoFrameCallback(
-      ((JSNumber _, JSObject __) => _tick()).toJS,
+      ((JSNumber _, JSObject _) => _tick()).toJS,
     );
   }
 
