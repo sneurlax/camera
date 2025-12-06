@@ -19,6 +19,13 @@ objc2-core-media = { version = "0.3.0", features = ["CMFormatDescription", "CMSa
 objc2-core-video = { version = "0.3.0", features = ["CVPixelBuffer", "CVImageBuffer", "CVBuffer", "CVReturn"] }
 objc2-foundation = { version = "0.3.0", features = ["NSString", "NSArray", "NSDictionary", "NSValue", "NSEnumerator", "NSError", "NSObject"] }
 
+# Linux: V4L2 capture straight through the kernel ioctl interface. `libc` only
+# provides the syscall bindings (open/close/ioctl/mmap/poll) and links against
+# the always-present glibc -- no `libv4l`, no GStreamer, no `-dev` package for
+# consumers to install, consistent with the crate's no-system-deps rule.
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"
+
 # Windows: Media Foundation capture. The `windows` crate binds to system DLLs
 # (mfplat/mfreadwrite/ole32) that ship with every Windows install -- no extra
 # dependency for consumers to install, consistent with the crate's no-system-
