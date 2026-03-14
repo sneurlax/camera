@@ -12,7 +12,7 @@ workspace:
   - packages/camera_control_flutter/example
 
 dev_dependencies:
-  melos: ^6.0.0
+  melos: ^7.0.0
 
 # Melos 7 reads its configuration from here (the pub-workspace root). Scripts
 # mirror CI and use the right tool per package (dart vs flutter).
