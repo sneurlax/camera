@@ -7,8 +7,8 @@ environment:
   sdk: ^3.5.0
 
 dependencies:
-  hooks: ^0.20.0
-  code_assets: ^0.18.0
+  hooks: ^1.0.0
+  code_assets: ^1.0.0
   build_tool:
     path: ../../build_tool
   ffi: ^2.1.0
