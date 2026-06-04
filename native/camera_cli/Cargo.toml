@@ -1,0 +1,38 @@
+[package]
+name = "camera_cli"
+version = "0.1.0"
+edition = "2021"
+description = "Native camera capture for CLI tools."
+license = "MIT"
+repository = "https://github.com/ManyMath/camera"
+
+[lib]
+name = "camera_cli"
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[profile.release]
+lto = true
+
+[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
+block2 = "0.6.2"
+dispatch2 = "0.3.1"
+objc2 = "0.6.4"
+objc2-av-foundation = { version = "0.3.2", features = ["AVCaptureDevice", "AVCaptureSession", "AVCaptureInput", "AVCaptureOutput", "AVCaptureVideoDataOutput", "AVMediaFormat", "objc2-core-media", "objc2-core-video"] }
+objc2-core-media = { version = "0.3.2", features = ["CMFormatDescription", "CMSampleBuffer", "CMTime", "objc2-core-video"] }
+objc2-core-video = { version = "0.3.2", features = ["CVPixelBuffer", "CVImageBuffer", "CVBuffer", "CVReturn"] }
+objc2-foundation = { version = "0.3.2", features = ["NSString", "NSArray", "NSDictionary", "NSValue", "NSEnumerator", "NSError", "NSObject"] }
+
+# Linux: V4L2 capture straight through the kernel ioctl interface. `libc` only
+# provides the syscall bindings (open/close/ioctl/mmap/poll) and links against
+# the usually-present glibc.
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"
+
+# Windows: Media Foundation capture. The `windows` crate binds to system DLLs
+# (mfplat/mfreadwrite/ole32) that ship with every Windows install.
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = { version = "0.58", features = [
+    "Win32_Foundation",
+    "Win32_System_Com",
+    "Win32_Media_MediaFoundation",
+] }
